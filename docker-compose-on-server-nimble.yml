@@ -1,0 +1,11 @@
+version: "2"
+services:
+
+    tracking-analysis-service:
+        image: nimbleplatform/tracking-analysis-service
+        container_name: tracking-analysis-service
+        environment:
+          BP_TRACKING_HOST: nimble-staging.salzburgresearch.at
+          BP_TRACKING_PORT: 80
+        ports:
+            - 8118:8091
