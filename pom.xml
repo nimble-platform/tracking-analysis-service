@@ -274,11 +274,6 @@
 									<include>${project.build.finalName}.jar</include>
 								</resource>
 								<resource>
-									<targetPath>/</targetPath>
-									<directory>${project.basedir}/libRepo/</directory>
-									<include>**.jar</include>
-								</resource>
-								<resource>
 									<targetPath>/resources</targetPath>
 									<directory>${project.basedir}/src/main/resources</directory>
 								</resource>
