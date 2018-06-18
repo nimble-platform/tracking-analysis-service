@@ -16,12 +16,12 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker') {
-            sh 'docker push nimbleplatform/catalog-search-service:staging'
+            sh 'docker push nimbleplatform/tracking-analysis-service:staging'
         }
 
-        stage('Deploy') {
-            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single search-service"'
-        }
+//        stage('Deploy') {
+//            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single search-service"'
+//        }
     } else {
         stage('Build Docker') {
             sh 'mvn docker:build -P docker'
@@ -29,9 +29,9 @@ node('nimble-jenkins-slave') {
     }
 
     if (env.BRANCH_NAME == 'master') {
-        stage('Deploy') {
-            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single search-service"'
-        }
+//        stage('Deploy') {
+//            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single search-service"'
+//        }
     }
 
     // push and apply only master branch
