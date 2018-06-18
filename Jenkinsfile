@@ -29,9 +29,9 @@ node('nimble-jenkins-slave') {
     }
 
     if (env.BRANCH_NAME == 'master') {
-//        stage('Deploy') {
-//            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single search-service"'
-//        }
+        stage('Deploy') {
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single tracking-analysis-service"'
+        }
     }
 
     // push and apply only master branch
