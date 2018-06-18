@@ -3,7 +3,7 @@
 node('nimble-jenkins-slave') {
 
     stage('Clone and Update') {
-        git(url: 'https://github.com/nimble-platform/catalog-search-service.git', branch: env.BRANCH_NAME)
+        git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: env.BRANCH_NAME)
     }
 
     stage('Build Java') {
