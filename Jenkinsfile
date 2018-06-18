@@ -19,9 +19,9 @@ node('nimble-jenkins-slave') {
             sh 'docker push nimbleplatform/tracking-analysis-service:staging'
         }
 
-//        stage('Deploy') {
-//            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single search-service"'
-//        }
+        stage('Deploy') {
+            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single tracking-analysis-service"'
+        }
     } else {
         stage('Build Docker') {
             sh 'mvn docker:build -P docker'
