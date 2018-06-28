@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +25,7 @@ import eu.nimble.service.trackingAnalysis.impl.dao.ProductTrackingResult;
 import eu.nimble.service.trackingAnalysis.impl.dao.ProductionProcessStep;
 import eu.nimble.service.trackingAnalysis.impl.dao.ProductionProcessTemplate;
 import joinery.DataFrame;
+import org.springframework.http.HttpMethod;
 
 /**
  * This service is used to get estimated duration of each production process step based on 
@@ -71,11 +74,11 @@ public class TrackingAnalysisService {
      * @param itemID
      * @return
      */
-    public ProductTrackingResult getProductTrackingResult(String itemID)
+    public ProductTrackingResult getProductTrackingResult(String itemID, HttpHeaders headers)
     {
     	ProductTrackingResult trackingRes = new ProductTrackingResult();
     	
-    	EPCTrackingMetaData tMetadata = this.getTrackingMetaDataForEPC(itemID);
+    	EPCTrackingMetaData tMetadata = this.getTrackingMetaDataForEPC(itemID, headers);
     	String eventURL = tMetadata.getEventUrl();
     	
     	URL eventRetrievalURL = null;
@@ -94,7 +97,9 @@ public class TrackingAnalysisService {
         System.out.println("itemID:" + itemID);
         System.out.println("URL:" + url);
 
-        ResponseEntity<EPCISObjectEvent[]> response = restTemplate.getForEntity(url, EPCISObjectEvent[].class);
+        //ResponseEntity<EPCISObjectEvent[]> response = restTemplate.getForEntity(url, EPCISObjectEvent[].class);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        ResponseEntity<EPCISObjectEvent[]> response = restTemplate.exchange(url, HttpMethod.GET,request, EPCISObjectEvent[].class);
         
         List<EPCISObjectEvent> result = Arrays.asList(response.getBody());
         trackingRes.setEpcisObjEvents(result);
@@ -110,16 +115,19 @@ public class TrackingAnalysisService {
      * @return production process template
      * @throws IOException
      */
-    public ProductionProcessTemplate getProductionProcessTemplateForEPC(String epc) {
+    public ProductionProcessTemplate getProductionProcessTemplateForEPC(String epc, HttpHeaders headers) {
 
     	ProductionProcessTemplate procTemplate = new ProductionProcessTemplate();
     	
-    	EPCTrackingMetaData tMetadata = this.getTrackingMetaDataForEPC(epc);
+    	EPCTrackingMetaData tMetadata = this.getTrackingMetaDataForEPC(epc, headers);
     	String procTemplateURL = tMetadata.getProductionProcessTemplate();
     	        
     	log.info("procTemplateURL:" + procTemplateURL);
 
-        ResponseEntity<ProductionProcessStep[]> response = restTemplate.getForEntity(procTemplateURL, ProductionProcessStep[].class);
+        //ResponseEntity<ProductionProcessStep[]> response = restTemplate.getForEntity(procTemplateURL, ProductionProcessStep[].class);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        ResponseEntity<ProductionProcessStep[]> response  = restTemplate.exchange(procTemplateURL, HttpMethod.GET,request, ProductionProcessStep[].class);
+        
         
         List<ProductionProcessStep> result = Arrays.asList(response.getBody());
         
@@ -137,7 +145,7 @@ public class TrackingAnalysisService {
      * @param epc
      * @return tracking meta data
      */
-    public EPCTrackingMetaData getTrackingMetaDataForEPC(String epc)
+    public EPCTrackingMetaData getTrackingMetaDataForEPC(String epc, HttpHeaders headers)
     {
     	log.info("EPC:" + epc);
         
@@ -145,7 +153,9 @@ public class TrackingAnalysisService {
 
         log.info("URL:" + url);
         
-        ResponseEntity<EPCTrackingMetaData> response = restTemplate.getForEntity(url, EPCTrackingMetaData.class);
+        //ResponseEntity<EPCTrackingMetaData> response = restTemplate.getForEntity(url, EPCTrackingMetaData.class);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        ResponseEntity<EPCTrackingMetaData> response = restTemplate.exchange(url, HttpMethod.GET, request,  EPCTrackingMetaData.class);
 
     	return response.getBody();
     }
@@ -157,7 +167,7 @@ public class TrackingAnalysisService {
      * @param productClass product class name in the NIMBLE platform
      * @return all product IDs that belongs to the given product class
      */
-    public List<String> getAllTrackableProductIDsByClass(String productClass)
+    public List<String> getAllTrackableProductIDsByClass(String productClass, HttpHeaders headers)
     {
     	log.info("productClass:" + productClass);
         
@@ -165,7 +175,10 @@ public class TrackingAnalysisService {
 
         log.info("URL:" + url);
         
-        ResponseEntity<String[]> response = restTemplate.getForEntity(url, String[].class);
+        
+        //ResponseEntity<String[]> response = restTemplate.getForEntity(url, String[].class);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        ResponseEntity<String[]> response = restTemplate.exchange(url, HttpMethod.GET, request, String[].class);
         
         List<String> epcList = Arrays.asList(response.getBody());
                  	
@@ -180,7 +193,7 @@ public class TrackingAnalysisService {
      * @param productClass
      * @return
      */
-    private DataFrame<Long> getEventTimeDataFrame(String productClass, ProductionProcessTemplate procTemplate)
+    private DataFrame<Long> getEventTimeDataFrame(String productClass, ProductionProcessTemplate procTemplate, HttpHeaders headers)
     {   	
     	if(null != eventTimeDataFrameCachSrv.get(productClass))
     	{
@@ -196,11 +209,11 @@ public class TrackingAnalysisService {
     	
     	DataFrame<Long> df = new DataFrame<Long>(stepIDs);
     	
-    	List<String> productIDs = getAllTrackableProductIDsByClass(productClass);
+    	List<String> productIDs = getAllTrackableProductIDsByClass(productClass, headers);
     	for(String productID:productIDs)
     	{
     		List<Long> eventTimes = new ArrayList<Long>();
-    		ProductTrackingResult trackRes = this.getProductTrackingResult(productID);
+    		ProductTrackingResult trackRes = this.getProductTrackingResult(productID, headers);
     		
     		for(ProductionProcessStep step : steps)
         	{
@@ -234,9 +247,9 @@ public class TrackingAnalysisService {
      * @param a single process step
      * @return duration in mill seconds
      */
-    public long getDurationBetweenProcessSteps(String productClass, ProductionProcessTemplate procTemplate, ProductionProcessStep stepStart, ProductionProcessStep stepStop)
+    public long getDurationBetweenProcessSteps(String productClass, ProductionProcessTemplate procTemplate, ProductionProcessStep stepStart, ProductionProcessStep stepStop, HttpHeaders headers)
     {
-    	DataFrame<Long> df = getEventTimeDataFrame(productClass, procTemplate);
+    	DataFrame<Long> df = getEventTimeDataFrame(productClass, procTemplate, headers);
     	
 		List<Long> stepStartEventTimeList = df.col(stepStart.getId());
 		List<Long> stepStopEventTimeList = df.col(stepStop.getId());

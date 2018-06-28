@@ -24,6 +24,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,9 +104,12 @@ public class TrackingAnalysisController {
 		On Failure: An empty list will be returned, when the product item is not found.
      */
     @RequestMapping("/simpleTrackingAnalysis/{itemID:.+}")
-    public List<ProductionProcessStep> simpleTrackingAnalysis(@PathVariable String itemID) {
+    public List<ProductionProcessStep> simpleTrackingAnalysis(@PathVariable String itemID, @RequestHeader(value = "Authorization") String bearer) {
     	
-    	ProductTrackingResult trackingResult = srv.getProductTrackingResult(itemID);
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add("Authorization", bearer);
+    	
+    	ProductTrackingResult trackingResult = srv.getProductTrackingResult(itemID, headers);
     	if(trackingResult.getEpcisObjEvents().isEmpty())
     	{
     		log.info("No tracking records for the item with EPC:" + itemID);
@@ -114,8 +118,8 @@ public class TrackingAnalysisController {
     	
     	EPCISObjectEvent lastObjEvent = trackingResult.getLastEvent();
     	
-    	ProductionProcessTemplate procTemplate = srv.getProductionProcessTemplateForEPC(itemID);
-    	EPCTrackingMetaData tMetadata = srv.getTrackingMetaDataForEPC(itemID);
+    	ProductionProcessTemplate procTemplate = srv.getProductionProcessTemplateForEPC(itemID, headers);
+    	EPCTrackingMetaData tMetadata = srv.getTrackingMetaDataForEPC(itemID, headers);
     	String productClass = tMetadata.getRelatedProductId();
     	
     	ProductionProcessStep lastProcStep = trackingResult.getMatchedProcStepForEvent(lastObjEvent, procTemplate);
@@ -123,7 +127,7 @@ public class TrackingAnalysisController {
     	
     	for(ProductionProcessStep step: unfinishedProcSteps)
     	{
-    		long duration = srv.getDurationBetweenProcessSteps(productClass, procTemplate, lastProcStep, step);
+    		long duration = srv.getDurationBetweenProcessSteps(productClass, procTemplate, lastProcStep, step, headers);
     		step.setStepTriggered(false);
     		long estimatedEventTime = lastObjEvent.getEventTime().getDate() + duration;
     		step.setEstimatedEventTime(estimatedEventTime);
