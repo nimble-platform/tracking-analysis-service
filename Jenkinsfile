@@ -3,7 +3,7 @@
 node('nimble-jenkins-slave') {
 
     stage('Clone and Update') {
-        git(url: 'https://github.com/nimble-platform/catalog-search-service.git', branch: env.BRANCH_NAME)
+        git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: env.BRANCH_NAME)
     }
 
     stage('Build Java') {
@@ -16,11 +16,11 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker') {
-            sh 'docker push nimbleplatform/catalog-search-service:staging'
+            sh 'docker push nimbleplatform/tracking-analysis-service:staging'
         }
 
         stage('Deploy') {
-            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single search-service"'
+            sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single tracking-analysis-service"'
         }
     } else {
         stage('Build Docker') {
@@ -30,7 +30,7 @@ node('nimble-jenkins-slave') {
 
     if (env.BRANCH_NAME == 'master') {
         stage('Deploy') {
-            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single search-service"'
+            sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single tracking-analysis-service"'
         }
     }
 
