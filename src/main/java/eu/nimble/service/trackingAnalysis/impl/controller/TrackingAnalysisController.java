@@ -101,7 +101,7 @@ public class TrackingAnalysisController {
 		      "hasNext":""
 		   }
 		]
-		On Failure: An empty list will be returned, when the product item is not found.
+		On Failure: An empty list will be returned, when the product item is not found or analysis is not possible because of other issues
      */
     @RequestMapping("/simpleTrackingAnalysis/{itemID:.+}")
     public List<ProductionProcessStep> simpleTrackingAnalysis(@PathVariable String itemID, @RequestHeader(value = "Authorization") String bearer) {
@@ -123,6 +123,12 @@ public class TrackingAnalysisController {
     	String productClass = tMetadata.getRelatedProductId();
     	
     	ProductionProcessStep lastProcStep = trackingResult.getMatchedProcStepForEvent(lastObjEvent, procTemplate);
+    	if(lastProcStep == null)
+    	{
+    		log.error("The last tracking event does not match any step in the process template, epc:" + itemID);
+    		return new ArrayList<ProductionProcessStep>();
+    	}
+    	
     	List<ProductionProcessStep> unfinishedProcSteps = procTemplate.getStepsAfter(lastProcStep);
     	
     	for(ProductionProcessStep step: unfinishedProcSteps)

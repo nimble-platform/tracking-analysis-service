@@ -74,6 +74,12 @@ public class ProductionProcessTemplate {
 		Deque<ProductionProcessStep> stepStack = new ArrayDeque<ProductionProcessStep>();
 		
 		List<ProductionProcessStep> directNextSteps = this.getNextStepsOf(curStep);
+		// return empty next steps, in case no direct next step
+		if(directNextSteps == null)
+		{
+			return nextSteps;
+		}
+		
 		for(ProductionProcessStep directNextStep: directNextSteps)
 		{
 			stepStack.push(directNextStep);
