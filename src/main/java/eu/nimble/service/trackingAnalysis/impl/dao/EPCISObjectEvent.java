@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -24,6 +28,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-05-25T13:08:37.265Z")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EPCISObjectEvent{ //extends HashMap<String, Object>  {
+	
+  private static Logger log = LoggerFactory.getLogger(EPCISObjectEvent.class);
+
   @JsonProperty("eventTimeZoneOffset")
   private String eventTimeZoneOffset = null;
 
@@ -245,6 +252,43 @@ public class EPCISObjectEvent{ //extends HashMap<String, Object>  {
     this.epcList = epcList;
   }
 
+  /**
+   * Check if the current EPCISObjectEvent is a valid event. 
+   * 
+   *  A valid EPCISObjectEvent must have at least the following properties, similar as steps defined in the NIMBLE Process Template.
+   *  	1). BizLocation
+   *    2). ReadPoint
+   *    3). BizStep
+   *    4). EventTime
+   */
+  public boolean isValidEvent()
+  {
+	  if(this.bizLocation == null || !StringUtils.isNotBlank(this.bizLocation.getId()))
+	  {
+		  log.error("bizLocation in the event is invalid!");
+		  return false;
+	  }
+	  
+	  if(this.readPoint == null || !StringUtils.isNotBlank(this.readPoint.getId()))
+	  {
+		  log.error("readPoint in the event is invalid!");
+		  return false;
+	  }
+	  
+	  if(!StringUtils.isNotBlank(this.bizStep))
+	  {
+		  log.error("bizStep in the event is invalid!");
+		  return false;
+	  }
+	  
+	  if(this.eventTime == null)
+	  {
+		  log.error("eventTime in the event is invalid!");
+		  return false;
+	  }
+	  
+	  return true;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {
