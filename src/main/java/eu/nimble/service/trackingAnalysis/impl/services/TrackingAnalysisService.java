@@ -97,9 +97,9 @@ public class TrackingAnalysisService {
         System.out.println("itemID:" + itemID);
         System.out.println("URL:" + url);
 
-        //ResponseEntity<EPCISObjectEvent[]> response = restTemplate.getForEntity(url, EPCISObjectEvent[].class);
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<EPCISObjectEvent[]> response = restTemplate.exchange(url, HttpMethod.GET,request, EPCISObjectEvent[].class);
+        ResponseEntity<EPCISObjectEvent[]> response = restTemplate.getForEntity(url, EPCISObjectEvent[].class);
+        //HttpEntity<String> request = new HttpEntity<String>(headers);
+        //ResponseEntity<EPCISObjectEvent[]> response = restTemplate.exchange(url, HttpMethod.GET,request, EPCISObjectEvent[].class);
         
         List<EPCISObjectEvent> result = Arrays.asList(response.getBody());
         trackingRes.setEpcisObjEvents(result);
@@ -124,9 +124,9 @@ public class TrackingAnalysisService {
     	        
     	log.info("procTemplateURL:" + procTemplateURL);
 
-        //ResponseEntity<ProductionProcessStep[]> response = restTemplate.getForEntity(procTemplateURL, ProductionProcessStep[].class);
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<ProductionProcessStep[]> response  = restTemplate.exchange(procTemplateURL, HttpMethod.GET,request, ProductionProcessStep[].class);
+        ResponseEntity<ProductionProcessStep[]> response = restTemplate.getForEntity(procTemplateURL, ProductionProcessStep[].class);
+        //HttpEntity<String> request = new HttpEntity<String>(headers);
+        //ResponseEntity<ProductionProcessStep[]> response  = restTemplate.exchange(procTemplateURL, HttpMethod.GET,request, ProductionProcessStep[].class);
         
         
         List<ProductionProcessStep> result = Arrays.asList(response.getBody());
