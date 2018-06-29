@@ -232,6 +232,11 @@ public class TrackingAnalysisService {
     	}
     	
     	log.info("Caching T&T event dataframe for product Class"+ productClass);
+    	log.info("Caching T&T event dataframe columns: " + df.columns());
+    	log.info("Caching T&T event dataframe columns: " + df.columns());
+    	log.info("Caching T&T event dataframe indexs: " + df.index());
+    	log.info("Caching T&T event dataframe flatten: " + df.flatten());
+    	
     	eventTimeDataFrameCachSrv.putEventTimeDataFrame(productClass, df);
     	
     	return df;

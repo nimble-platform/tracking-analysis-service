@@ -3,6 +3,7 @@ package eu.nimble.service.trackingAnalysis.impl.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +23,9 @@ import joinery.DataFrame;
 public class EventTimeDataFrameCacheService {
 		// in mill seconds
 		final long ONE_DAY = 24 * 60 * 60 * 1000;
+		// todo: get the value from spring property value
+		final long FIVE_MIN = 5 * 60 * 1000;
+
 	
 		/**
 		 * Key is product class, value is the T&T event time data frame.
@@ -49,7 +53,7 @@ public class EventTimeDataFrameCacheService {
 	    public void evict(String productClass){
 	    }
 	    
-	    @Scheduled(fixedDelay  = ONE_DAY)
+	    @Scheduled(fixedDelay  = FIVE_MIN)
 	    @CacheEvict(allEntries = true, value = "ttEvents")
 	    public void clearCache() {      
 	    }

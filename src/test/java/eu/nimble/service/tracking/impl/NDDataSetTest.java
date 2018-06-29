@@ -29,23 +29,26 @@ public class NDDataSetTest {
 		System.out.println(df.get("row3", "step1") == null);
 		System.out.println(df.index());
 		System.out.println(df.get("row3", "step2") == null);
+		System.out.println(df.columns());
 		
-		// step 1 duration, need step 1 and step 2 data
-		List<Object> step1List = df.col("step1");
-		List<Object> step2List = df.col("step2");
+		System.out.println(df.flatten());
 		
-		List<Object> result = new ArrayList();
-		long sum = 0;
-		int validNum = 0;
-		for (int i = 0; i < step1List.size(); i++) {
-		   if (step1List.get(i) != null && step2List.get(i) != null) {
-			   validNum +=1;
-			   sum += (Long.parseLong(step2List.get(i).toString()) - Long.parseLong(step1List.get(i).toString()));
-		   }
-		}	
-		
-		long avg = sum/validNum;
-		System.out.println("avg val: " + avg);
+//		// step 1 duration, need step 1 and step 2 data
+//		List<Object> step1List = df.col("step1");
+//		List<Object> step2List = df.col("step2");
+//		
+//		List<Object> result = new ArrayList();
+//		long sum = 0;
+//		int validNum = 0;
+//		for (int i = 0; i < step1List.size(); i++) {
+//		   if (step1List.get(i) != null && step2List.get(i) != null) {
+//			   validNum +=1;
+//			   sum += (Long.parseLong(step2List.get(i).toString()) - Long.parseLong(step1List.get(i).toString()));
+//		   }
+//		}	
+//		
+//		long avg = sum/validNum;
+//		System.out.println("avg val: " + avg);
 
 //		
 //		// remove index with null
