@@ -51,6 +51,7 @@ public class ProductTrackingResult {
 	 */
 	public EPCISObjectEvent getLastEvent()
 	{
+
 		EPCISObjectEvent lastEvent = Collections.max(epcisObjEvents, Comparator.comparing(event -> event.getEventTime().getDate()));
 		return lastEvent;
 	}
