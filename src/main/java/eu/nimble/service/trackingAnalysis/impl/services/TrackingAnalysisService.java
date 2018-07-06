@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -181,8 +182,10 @@ public class TrackingAnalysisService {
         ResponseEntity<String[]> response = restTemplate.exchange(url, HttpMethod.GET, request, String[].class);
         
         List<String> epcList = Arrays.asList(response.getBody());
+        List<String> epcListListWithoutDuplicates = new ArrayList<>(
+        	      new HashSet<>(epcList));
                  	
-    	return epcList;
+    	return epcListListWithoutDuplicates;
     }
     
     /**
