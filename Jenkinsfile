@@ -64,8 +64,8 @@ node('nimble-jenkins-slave') {
         }
 
         stage('Push Docker') {
-            sh 'docker push nimbleplatform/data-aggregation-service:' + env.TAG_NAME
-            sh 'docker push nimbleplatform/data-aggregation-service:latest'
+            sh 'docker push nimbleplatform/tracking-analysis-service:' + env.TAG_NAME
+            sh 'docker push nimbleplatform/tracking-analysis-service:latest'
         }
 
         stage('Deploy') {
