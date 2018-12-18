@@ -2,15 +2,19 @@
 
 node('nimble-jenkins-slave') {
 
-    stage('Clone and Update') {
-        git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: env.BRANCH_NAME)
-    }
-
-    stage('Build Java') {
-        sh 'mvn clean package -DskipTests'
-    }
-
+    // -----------------------------------------------
+    // --------------- Staging Branch ----------------
+    // -----------------------------------------------
     if (env.BRANCH_NAME == 'staging') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: env.BRANCH_NAME)
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean package -DskipTests'
+        }
+
         stage('Build Docker') {
             sh 'mvn docker:build -P docker -DdockerImageTag=staging'
         }
@@ -22,28 +26,50 @@ node('nimble-jenkins-slave') {
         stage('Deploy') {
             sh 'ssh staging "cd /srv/nimble-staging/ && ./run-staging.sh restart-single tracking-analysis-service"'
         }
-    } else {
-        stage('Build Docker') {
-            sh 'mvn docker:build -P docker'
+    }
+
+    // -----------------------------------------------
+    // ---------------- Master Branch ----------------
+    // -----------------------------------------------
+    if (env.BRANCH_NAME == 'master') {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: env.BRANCH_NAME)
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean package -DskipTests'
         }
     }
 
-    if (env.BRANCH_NAME == 'master') {
+    // -----------------------------------------------
+    // ---------------- Release Tags -----------------
+    // -----------------------------------------------
+    if( env.TAG_NAME ==~ /^\d+.\d+.\d+$/) {
+
+        stage('Clone and Update') {
+            git(url: 'https://github.com/nimble-platform/tracking-analysis-service.git', branch: 'master')
+        }
+
+        stage('Set version') {
+            sh 'mvn versions:set -DnewVersion=' + env.TAG_NAME
+        }
+
+        stage('Build Java') {
+            sh 'mvn clean package -DskipTests'
+        }
+
+        stage('Build Docker') {
+            sh 'mvn docker:build -P docker'
+        }
+
+        stage('Push Docker') {
+            sh 'docker push nimbleplatform/data-aggregation-service:' + env.TAG_NAME
+            sh 'docker push nimbleplatform/data-aggregation-service:latest'
+        }
+
         stage('Deploy') {
             sh 'ssh nimble "cd /data/deployment_setup/prod/ && sudo ./run-prod.sh restart-single tracking-analysis-service"'
         }
     }
-
-    // push and apply only master branch
-//    if (env.BRANCH_NAME == 'master') {
-//        stage('Push Docker') {
-//            withDockerRegistry([credentialsId: 'NimbleDocker']) {
-//                sh 'docker push nimbleplatform/catalog-search-service'
-//            }
-//        }
-//
-//        stage('Apply to Cluster') {
-//            sh 'kubectl apply -f kubernetes/deploy-prod.yml -n prod --validate=false'
-//        }
-//    }
 }
