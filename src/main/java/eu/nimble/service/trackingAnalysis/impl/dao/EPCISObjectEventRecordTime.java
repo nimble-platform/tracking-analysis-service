@@ -21,7 +21,7 @@ public class EPCISObjectEventRecordTime   {
   //private Long date = null;
   
   // $numberLong: "1530883056000"
-  @JsonProperty("$numberLong")
+  @JsonProperty("$date")
   private Long date = null;
 
   public EPCISObjectEventRecordTime date(Long date) {

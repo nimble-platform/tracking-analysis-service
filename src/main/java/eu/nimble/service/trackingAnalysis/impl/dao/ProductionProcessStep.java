@@ -1,5 +1,7 @@
 package eu.nimble.service.trackingAnalysis.impl.dao;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
@@ -32,6 +34,14 @@ public class ProductionProcessStep   {
 
   @JsonProperty("hasNext")
   private String hasNext = null;
+  
+  @JsonProperty("durationToNext")
+  private String durationToNext = null;
+  
+  // Time unit can be one of the following values:
+  // "DAYS" "HOURS" "MICROSECONDS" "MILLISECONDS" "MINUTES" "NANOSECONDS" "SECONDS" 
+@JsonProperty("durationTimeUnit")
+  private String durationTimeUnit = null;
   
   // attributes to keep T&T analysis result
   private boolean isStepTriggered = true;
@@ -178,6 +188,60 @@ public class ProductionProcessStep   {
     this.hasNext = hasNext;
   }
 
+  /**
+  * Get durationToNext
+  * @return durationToNext
+ **/
+ @ApiModelProperty(value = "")
+ 
+  public String getDurationToNext() {
+	return durationToNext;
+}
+
+public void setDurationToNext(String durationToNext) {
+	this.durationToNext = durationToNext;
+}
+
+/**
+* Get durationTimeUnit
+* @return durationTimeUnit
+**/
+@ApiModelProperty(value = "")
+public String getDurationTimeUnit() {
+	return durationTimeUnit;
+}
+
+public void setDurationTimeUnit(String durationTimeUnit) {
+	this.durationTimeUnit = durationTimeUnit;
+}
+
+/**
+ * Convert specified durationToNext to MICROSECONDS 
+ * @return a positve long value when the durationToNext and durationTimeUnit are correctly specified; -1, otherwise
+ */
+public long getDurationToNextInMS()
+{
+	long FAILED = -1;
+	if(durationToNext == null || durationTimeUnit == null)
+	{
+		return FAILED;
+	}
+	
+	TimeUnit durationUnit = TimeUnit.valueOf(durationTimeUnit.toUpperCase());
+	long duration = Long.valueOf(durationToNext);
+	
+	return durationUnit.toMillis(duration);
+}
+
+/**
+ * Check if the current step the final step in production process template. 
+ * Final step is the step which does not have next step.
+ * @return true, when it is final step; false, otherwise
+ */
+public boolean isFinalStep()
+{
+	return this.getHasNext().trim().isEmpty();
+	}
 
   @Override
   public boolean equals(java.lang.Object o) {

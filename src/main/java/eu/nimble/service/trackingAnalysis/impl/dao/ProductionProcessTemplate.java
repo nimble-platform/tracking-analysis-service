@@ -63,6 +63,40 @@ public class ProductionProcessTemplate {
 	}
 	
 	/**
+	 * Get one single step direct next to the given process step
+	 * @param curStep
+	 * @return next step, if found; null, otherwise
+	 */
+	public ProductionProcessStep getNextStepOf(ProductionProcessStep curStep)
+	{
+		List<ProductionProcessStep> directNextSteps = this.getNextStepsOf(curStep);
+
+		if(directNextSteps != null && !directNextSteps.isEmpty())
+		{
+			return directNextSteps.get(0);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Get one single step direct prev to the given process step
+	 * @param curStep
+	 * @return prev step, if found; null, otherwise
+	 */
+	public ProductionProcessStep getPrevStepOf(ProductionProcessStep curStep)
+	{
+		List<ProductionProcessStep> directPrevSteps = this.getPrevStepsOf(curStep);
+
+		if(directPrevSteps != null && !directPrevSteps.isEmpty())
+		{
+			return directPrevSteps.get(0);
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Get all steps after the given process step
 	 * @param curStep
 	 * @return
