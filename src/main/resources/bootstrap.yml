@@ -22,7 +22,7 @@ logstash:
   uri: ${LOGSTASH_URI:localhost:5000}
 
 nimble:
-  platformHost: ${TRACKING_SERVICE_URL:http://localhost:8091}  
+  platformHost: ${TRACKING_ANALYSIS_SERVICE_URL:http://localhost:8091}  
 
 ---
 
