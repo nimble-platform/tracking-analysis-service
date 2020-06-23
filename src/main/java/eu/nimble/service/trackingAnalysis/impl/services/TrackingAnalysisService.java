@@ -35,7 +35,6 @@ import eu.nimble.service.trackingAnalysis.impl.dao.ProductTrackingResult;
 import eu.nimble.service.trackingAnalysis.impl.dao.ProductionEndTimeEstimation;
 import eu.nimble.service.trackingAnalysis.impl.dao.ProductionProcessStep;
 import eu.nimble.service.trackingAnalysis.impl.dao.ProductionProcessTemplate;
-import joinery.DataFrame;
 import org.springframework.http.HttpMethod;
 
 /**
