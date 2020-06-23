@@ -1,20 +1,48 @@
 package eu.nimble.service.trackingAnalysis.impl.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.nimble.service.trackingAnalysis.impl.controller.TrackingAnalysisController;
+
 public class ProductTrackingResult {
 
-	List<EPCISObjectEvent> epcisObjEvents;
+    private static Logger log = LoggerFactory.getLogger(ProductTrackingResult.class);
+
+    
+	private List<EPCISObjectEvent> epcisObjEvents;
 
 	public List<EPCISObjectEvent> getEpcisObjEvents() {
 		return epcisObjEvents;
 	}
 
 	public void setEpcisObjEvents(List<EPCISObjectEvent> epcisObjEvents) {
-		this.epcisObjEvents = epcisObjEvents;
+		
+		boolean containInvalidEvent = false;
+		for(EPCISObjectEvent event: epcisObjEvents)
+		{
+			if(event == null || !event.isValidEvent())
+			{
+				containInvalidEvent = true;
+				break;
+			}
+		}
+		
+		if(containInvalidEvent)
+		{
+			log.error("The returned product tracking results contains invalid events.");
+			this.epcisObjEvents = new ArrayList<EPCISObjectEvent>();
+		}
+		else
+		{
+			this.epcisObjEvents = epcisObjEvents;
+		}
 	}
 	
 	/**
@@ -23,6 +51,7 @@ public class ProductTrackingResult {
 	 */
 	public EPCISObjectEvent getLastEvent()
 	{
+
 		EPCISObjectEvent lastEvent = Collections.max(epcisObjEvents, Comparator.comparing(event -> event.getEventTime().getDate()));
 		return lastEvent;
 	}

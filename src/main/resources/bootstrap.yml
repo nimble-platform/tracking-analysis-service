@@ -16,11 +16,13 @@ spring:
       # service discovery is disabled by default and should be enabled (set to true) for the "cloud mode".
       # it can be set via an environment variable or the config server
       enabled: ${discovery.enabled:${DISCOVERY_ENABLED:false}}
-  bpForTracking:
-    url: http://${BP_TRACKING_HOST:nimble-staging.salzburgresearch.at}:${BP_TRACKING_PORT:80}  
+  tracking:
+    url: ${TRACKING_SERVICE_URL:http://nimble-dev.ikap.biba.uni-bremen.de/tracking/}
 logstash:
   uri: ${LOGSTASH_URI:localhost:5000}
-  
+
+nimble:
+  platformHost: ${TRACKING_ANALYSIS_SERVICE_URL:http://localhost:8091}  
 
 ---
 

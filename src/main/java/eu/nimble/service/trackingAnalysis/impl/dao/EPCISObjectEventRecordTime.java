@@ -15,6 +15,12 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2018-05-25T13:08:37.265Z")
 
 public class EPCISObjectEventRecordTime   {
+  // ISODate("2018-04-04T02:33:31.116Z")
+  // $date: 1524156074162
+  //@JsonProperty("$date")
+  //private Long date = null;
+  
+  // $numberLong: "1530883056000"
   @JsonProperty("$date")
   private Long date = null;
 

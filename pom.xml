@@ -60,11 +60,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/joinery/joinery-dataframe -->
-        <dependency>
-            <groupId>joinery</groupId>
-            <artifactId>joinery-dataframe</artifactId>
-            <version>1.8</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>joinery</groupId>-->
+            <!--<artifactId>joinery-dataframe</artifactId>-->
+            <!--<version>1.8</version>-->
+        <!--</dependency>-->
 
         <!--
             <dependency>
